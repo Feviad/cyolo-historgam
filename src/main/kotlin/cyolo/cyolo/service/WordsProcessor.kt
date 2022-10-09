@@ -19,14 +19,13 @@ class WordsProcessor(
     suspend fun getRank(): Map<String, Int> {
         val counts = counter.wordMap.also { log.trace(it) }
 
-        return when {
-            counts.size == 0 -> mapOf()
-            counts.size <= 5 -> counts.mapRank(counts.maxOf { it.value }, counts.minOf { it.value })
+        return when (counts.size) {
+            0 -> mapOf()
             else -> {
                 val topWords = PriorityQueue<Pair<String, Int>>(5, compareBy { -it.second }).also { queue ->
                     counts.forEach { queue.add(Pair(it.key, it.value)) }
                 }.let { queue ->
-                    (1..5).associate { queue.poll() }
+                    (1..(queue.size.takeIf { it<5 } ?: 5)).associate { queue.poll() }
                 }
 
                 topWords.mapRank(topWords.values.first(), topWords.values.last())

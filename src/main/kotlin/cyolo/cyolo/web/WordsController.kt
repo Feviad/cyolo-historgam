@@ -20,7 +20,7 @@ class WordsController(
         return ResponseEntity(HttpStatus.OK)
     }
 
-    //any data?
+    //any data input? for what?
     @GetMapping
     suspend fun rank(): Map<String, Int> {
         return processor.getRank()
